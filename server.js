@@ -9,6 +9,7 @@ app.use(express.json());
 app.use("/user", userRouter);
 app.use("/shows", showsRouter);
 
-app.listen(5001, async () => {
-  await db.sync();
+app.listen(3000, async () => {
+    console.log("Listening on port 3000");
+    await db.sync()
 });
