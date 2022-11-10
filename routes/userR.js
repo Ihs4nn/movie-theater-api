@@ -1,15 +1,16 @@
 //Defining section of the User Route
 const { Router } = require("express");
 const userRouter = Router();
-const { User } = require("../models/User");
-const { Show } = require("../models/Show");
-
+const { User, Show } = require("../models")
 //Validation function for the PUT method
-// function userValidation (req, res, next) {
-//     if()
 
-//     next()
-// }
+async function userValidation (req, res, next) {
+    req.show = await Show.findByPk(req.params.showNum)
+    if(req.show.status === "null" || req.show.status.includes(" ") || req.show.status.length > 25 || req.show.status.length < 5){
+        res.sendStatus(404)
+    }
+    next()
+}
 
 //GET all User
 userRouter.get("/", async (req, res) => {
@@ -31,16 +32,12 @@ userRouter.get("/:num/shows", async (req, res) => {
 })
 
 //PUT update and add a show if a User has watched it
-userRouter.put("/:userNum/shows/:showNum", async (req, res) => {
-    const user = await User.findOne({
-        where: {id: req.params.userNum}
-    })
-    const show = await Show.findOne({
-        where: {id: req.params.showNum}
-    })
+userRouter.put("/:userNum/shows/:showNum", userValidation, async (req, res) => {
+    const user = await User.findByPk(req.params.userNum)
+    // const show = await Show.findByPk(req.params.showNum)
     //when a user has watched a show it should add that userId to the show
-    await user.addShows(show);
-    res.status(200).send(user);
+    await req.show.setUser(user);
+    res.status(200).send(req.show);
 })
 
 module.exports = userRouter;
