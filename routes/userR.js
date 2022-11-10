@@ -5,6 +5,11 @@ const { User } = require("../models/User");
 const { Show } = require("../models/Show");
 
 //Validation function for the PUT method
+// function userValidation (req, res, next) {
+//     if()
+
+//     next()
+// }
 
 //GET all User
 userRouter.get("/", async (req, res) => {
@@ -26,5 +31,16 @@ userRouter.get("/:num/shows", async (req, res) => {
 })
 
 //PUT update and add a show if a User has watched it
+userRouter.put("/:userNum/shows/:showNum", async (req, res) => {
+    const user = await User.findOne({
+        where: {id: req.params.userNum}
+    })
+    const show = await Show.findOne({
+        where: {id: req.params.showNum}
+    })
+    //when a user has watched a show it should add that userId to the show
+    await user.addShows(show);
+    res.status(200).send(user);
+})
 
 module.exports = userRouter;
