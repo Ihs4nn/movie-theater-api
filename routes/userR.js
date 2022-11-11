@@ -34,25 +34,12 @@ userRouter.get("/:num/shows", async (req, res) => {
 })
 
 //PUT update and add a show if a User has watched it
-userRouter.put("/:userNum/shows/:showNum", 
-    //Actual validation of the status w/messages
-    body('status').not().isEmpty()
-    .withMessage("Cant leave it blank!").custom(value => !/\s/.test(value))
-    .withMessage("Cant have white spaces!").isLength({max: 25}).isLength({min: 5})
-    .withMessage("Must be between 5-25 characters"),
-    
-    //Updates the user after the validation
-    async (req, res) => {
-        //Sends error if there is an error obviously
-        const error = validationResult(req);
-        if(!error.isEmpty()){
-            res.status(401).send(error)
-        }
+userRouter.put("/:userNum/shows/:showNum", async (req, res) => {
         const user = await User.findByPk(req.params.userNum)
         const show = await Show.findByPk(req.params.showNum)
     //when a user has watched a show it should add that userId to the show
         await show.setUser(user);
-        res.status(200).send("Successful");
+        res.status(200).send(show);
 })
 
 module.exports = userRouter;

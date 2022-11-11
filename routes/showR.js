@@ -38,7 +38,7 @@ showRouter.put("/:num/watched",
     
     body('rating').not().isEmpty()
     .withMessage("Cant leave it blank!").custom(value => !/\s/.test(value))
-    .withMessage("Cant have white spaces!"), 
+    .withMessage("Cant have white spaces!"),
     
     async (req, res) => {
 
@@ -50,11 +50,28 @@ showRouter.put("/:num/watched",
         await showRate.update({
             rating: req.body.rating
         })
-        res.status(200).send("Successful");
+        res.status(200)
 })
 
 //PUT update the status of a Show
+showRouter.put("/:num/updates",     
+    body('status').not().isEmpty()
+    .withMessage("Cant leave it blank!").custom(value => !/\s/.test(value))
+    .withMessage("Cant have white spaces!").isLength({max: 25}).isLength({min: 5})
+    .withMessage("Must be between 5-25 characters"),
+    
+    async(req, res) => {
+        const error = validationResult(req);
+        if(!error.isEmpty()){
+            res.status(401).send(error);
+        } 
 
+        const showStatus = await Show.findByPk(req.params.num)
+        await showStatus.update({
+            status: req.body.status
+        })
+        res.sendStatus(200)
+    })
 
 //DELETE a Show
 
