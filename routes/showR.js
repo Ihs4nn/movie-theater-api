@@ -16,13 +16,13 @@ const { body, validationResult } = require('express-validator')
 //GET all Shows
 showRouter.get("/", async (req, res) => {
     const allShows = await Show.findAll();
-    res.status(200).send(allShows);
+    res.status(200).send(`Here are all of the shows: ${JSON.stringify(allShows, null, 10)}`);
 })
 
 //GET one Shows
 showRouter.get("/:num", async (req, res) => {
     const oneShow = await Show.findByPk(req.params.num);
-    res.status(200).send(oneShow);
+    res.status(200).send(`Here is the show associated with this number ${req.params.num}: ${JSON.stringify(oneShow, null, 1)}`);
 })
 
 //GET Shows in a particular genre [req.params]
@@ -30,7 +30,7 @@ showRouter.get("/genres/:category", async (req, res) => {
     const allCategory = await Show.findAll({
         where: {genre: req.params.category}
     })
-    res.status(200).send(allCategory);
+    res.status(200).send(`Here are all the shows associated with the ${req.params.category} category: ${JSON.stringify(allCategory, null, 5)}`);
 })
 
 //PUT updating rating of a Show that has been watched
@@ -77,7 +77,7 @@ showRouter.put("/:num/updates",
 showRouter.put("/:num/delete", async (req, res) =>{
     const findShow = await Show.findByPk(req.params.num);
     await findShow.destroy()
-    res.status(200).send("Show deleted!")
+    res.status(200).send(`The show number ${req.params.num} has been deleted!`)
 })
 
 
